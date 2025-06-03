@@ -1,0 +1,45 @@
+module SyncRAM_tb;
+    reg clk;
+    reg we;
+    reg [3:0] addr;
+    reg [7:0] din;
+    wire [7:0] dout;
+
+    // Instantiate the RAM
+    SyncRAM uut (
+        .clk(clk),
+        .we(we),
+        .addr(addr),
+        .din(din),
+        .dout(dout)
+    );
+
+    // Clock generation
+    always #5 clk = ~clk;
+
+    initial begin
+        clk = 0; we = 0; addr = 0; din = 0;
+
+        $display("Time\tClk\tWE\tADDR\tDIN\tDOUT\tOperation");
+
+        // Write to address 4
+        #10; addr = 4; din = 8'hAA; we = 1;
+        #10; $display("%0t\t%b\t%b\t%0d\t%h\t%h\tWRITE", $time, clk, we, addr, din, dout);
+             we = 0;
+
+        // Read from address 4
+        #10; addr = 4;
+        #10; $display("%0t\t%b\t%b\t%0d\t%h\t%h\tREAD", $time, clk, we, addr, din, dout);
+
+        // Write to address 2
+        #10; addr = 2; din = 8'h55; we = 1;
+        #10; $display("%0t\t%b\t%b\t%0d\t%h\t%h\tWRITE", $time, clk, we, addr, din, dout);
+             we = 0;
+
+        // Read from address 2
+        #10; addr = 2;
+        #10; $display("%0t\t%b\t%b\t%0d\t%h\t%h\tREAD", $time, clk, we, addr, din, dout);
+
+        #10 $stop;
+    end
+endmodule
